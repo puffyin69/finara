@@ -30,11 +30,8 @@ export async function POST(request) {
     const userId = user._id;
 
     const body = await request.json();
-
-    // Validate using Zod
     const data = createTransactionSchema.parse(body);
 
-    // IMPORTANT: Convert incoming date to actual Date object
     const baseDate = new Date(data.date);
     if (isNaN(baseDate.getTime())) {
       return NextResponse.json(
@@ -46,14 +43,12 @@ export async function POST(request) {
     let nextRecurringDate = null;
     const currentDate = new Date();
 
-    // Recurring logic (no Invalid Date)
     if (data.isRecurring && data.recurringInterval) {
       const calculatedDate = calculateNextOccurrenceDate(
         baseDate,
         data.recurringInterval
       );
 
-      // If calculated date is invalid → fail gracefully
       if (isNaN(calculatedDate.getTime())) {
         nextRecurringDate = null;
       } else {
@@ -64,7 +59,6 @@ export async function POST(request) {
       }
     }
 
-    // Create transaction entry
     const transaction = await Transactions.create({
       ...data,
       userId,

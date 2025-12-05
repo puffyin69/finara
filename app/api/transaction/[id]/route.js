@@ -5,7 +5,6 @@ import { User } from "@/models/User";
 import { ConnectDb } from "@/app/lib/Mongodb";
 import { updateTransactionSchema } from "@/app/validators/validateTransaction";
 import { calculateNextOccurrenceDate } from "@/app/utils/helper";
-import {bulkTransactionDeleteSchema} from "@/app/validators/validateTransaction";
 export async function GET(request, { params }) {
   try {
     await ConnectDb();
