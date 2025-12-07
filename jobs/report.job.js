@@ -1,6 +1,7 @@
 import { ConnectDb } from "@/app/lib/Mongodb";
 import ReportSetting from "@/models/reportSetting";
 import { generateReportService, calculateNextReportDate } from "@/app/utils/helper";
+import { sendReportEmail } from "@/app/api/send/route";
 import mongoose from "mongoose";
 import Report from "@/models/reports";
 export async function processReportJob() {
@@ -47,8 +48,26 @@ export async function processReportJob() {
       let emailSent = false;
       if (reportData) {
         try {
+          await sendReportEmail({
+            email: user.email,
+            username: user.name,
+            report: {
+              period: reportData.period?.from && reportData.period?.to 
+                ? `${reportData.period.from} - ${reportData.period.to}` 
+                : reportData.period,
+              totalIncome: reportData.summary?.totalIncome || reportData.totalIncome || 0,
+              totalExpenses: reportData.summary?.totalExpense || reportData.totalExpenses || 0,
+              availableBalance: reportData.summary?.availableBalance || reportData.availableBalance || 0,
+              savingsRate: reportData.summary?.savingsRate || reportData.savingsRate || 0,
+              topSpendingCategories: reportData.summary?.topCategories || reportData.topCategories || [],
+              insights: reportData.insights,
+            },
+            frequency: setting.frequency,
+          });
           emailSent = true;
-        } catch (err) {
+          console.log(`Email sent successfully to ${user.email}`);
+        } catch (error) {
+          console.log(`Email failed for ${user.email}:`, error.message);
           emailSent = false;
         }
       }
