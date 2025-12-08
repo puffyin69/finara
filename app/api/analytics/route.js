@@ -15,7 +15,7 @@ const dateRangeEnums = {
   CUSTOM: "custom",
 };
 
-function getDateRange(preset) {
+export function getDateRange(preset) {
   const now = new Date();
   let fromDate, toDate;
   switch (preset) {
