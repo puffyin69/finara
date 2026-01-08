@@ -6,8 +6,8 @@ export default async function Home() {
 
   return (
     <main className="p-10">
-      <DummyClient session={session} />
-      <h1 className="text-4xl shadow-inner font-bold">Initialising the frontend of the website!</h1>
+      <Navbar />
+      <DummyClient session={session} /> 
     </main>
   );
 }
